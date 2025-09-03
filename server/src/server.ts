@@ -1,19 +1,28 @@
 import express from "express";
-import dotenv from "dotenv";
+import helmet from "helmet";
+import morgan from "morgan";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import { OK } from "./constants/httpStatus";
+import authRoutes from "./routes/authRoutes";
+import { connectDb } from "./lib/connectDb";
 
-// conffigure dotenv
+// confgure
 dotenv.config();
 
-const app = express();
+const PORT = process.env.PORT;
+const APP_ORIGIN = process.env.APP_ORIGIN;
 
-const PORT = process.env.PORT || 8080;
-const APP_ORIGIN = process.env.APP_ORGIN;
+const app = express();
 
 // initialisation
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(morgan("common"));
+
 app.use(
   cors({
     origin: APP_ORIGIN,
@@ -24,12 +33,16 @@ app.use(cookieParser());
 
 // routes definition
 app.get("/", (req, res) => {
-  res.status(200).json({
+  res.status(OK).json({
     status: "healthy",
   });
 });
 
+// Lets kick off!
+app.use("/api/auth", authRoutes);
+
 //LISTEN ON PORT NUMBER
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
+  connectDb();
 });

@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import { OK } from "./constants/httpStatus";
 import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
+import messageRoutes from "./routes/messageRoutes";
 import { connectDb } from "./lib/connectDb";
 
 // confgure
@@ -40,6 +42,8 @@ app.get("/", (req, res) => {
 
 // Lets kick off!
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/message", messageRoutes);
 
 //LISTEN ON PORT NUMBER
 app.listen(PORT, () => {

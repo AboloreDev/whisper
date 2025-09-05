@@ -4,6 +4,7 @@ import {
   CREATED,
   FORBIDDEN,
   INTRENAL_SERVER_ERROR,
+  OK,
 } from "../constants/httpStatus";
 import User from "../models/UserModel";
 import bcrypt from "bcryptjs";
@@ -11,7 +12,7 @@ import { generateToken } from "../lib/generateToken";
 
 export const registerUser = async (req: Request, res: Response) => {
   // GET REQUEST FROM BODY
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, profilePic } = req.body;
 
   try {
     // VALIDATE ALL FIELDS
@@ -43,6 +44,7 @@ export const registerUser = async (req: Request, res: Response) => {
       lastName,
       email,
       password: hashedPassword,
+      profilePic,
     });
 
     if (newUser) {
@@ -66,6 +68,48 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUser = (req: Request, res: Response) => {};
+export const loginUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
 
-export const logoutUser = (req: Request, res: Response) => {};
+    if (!user) {
+      return res
+        .status(BAD_REQUEST)
+        .json({ message: "Invalid email or password" });
+    }
+
+    const comparePassword = await bcrypt.compare(password, user.password);
+    if (!comparePassword) {
+      return res
+        .status(BAD_REQUEST)
+        .json({ message: "Invalid email or password" });
+    }
+
+    //GENRATE TOKEN WHEN ALL IS CORRECT//
+    generateToken(user._id, res);
+
+    // SEND A RESPONSE
+    res
+      .status(OK)
+      .json({ success: true, message: "User Logged in succesfully", user });
+  } catch (error) {
+    return res
+      .status(INTRENAL_SERVER_ERROR)
+      .json({ message: "Internal Server Error", error });
+  }
+};
+
+export const logoutUser = (req: Request, res: Response) => {
+  // CLEAR OUT COOKIES ON LOGOUT
+  try {
+    res.cookie("token", "", { maxAge: 0 });
+    res
+      .status(OK)
+      .json({ success: true, message: "User Logged out succesfully" });
+  } catch (error) {
+    return res
+      .status(INTRENAL_SERVER_ERROR)
+      .json({ message: "Internal Server Error", error });
+  }
+};

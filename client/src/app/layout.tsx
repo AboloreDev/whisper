@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
+import Navbar from "@/components/code/Navbar";
+import Providers from "./providers";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Whisper Chat App",
@@ -14,7 +17,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="poppins-regular">{children}</body>
+      <body className="poppins-regular">
+        <Providers>
+          <Toaster />
+          <Navbar />
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }

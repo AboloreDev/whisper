@@ -5,11 +5,7 @@ import Container from "./Container";
 import { LogOut, MessageSquare, Settings, User } from "lucide-react";
 import Link from "next/link";
 import Header from "./Header";
-import {
-  api,
-  useGetUserProfileQuery,
-  useLogoutUserMutation,
-} from "@/state/api";
+import { useGetUserProfileQuery, useLogoutUserMutation } from "@/state/api";
 import { Button } from "../ui/button";
 import { useAppDispatch } from "@/state/redux";
 import { clearUser } from "@/state/slices";

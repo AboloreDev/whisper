@@ -18,7 +18,13 @@ export const api = createApi({
     // Register new user
     registerUser: build.mutation<
       AuthResponse,
-      { firstName: string; lastName: string; email: string; password: string }
+      {
+        firstName: string;
+        lastName: string;
+        email: string;
+        password: string;
+        profilePic: string;
+      }
     >({
       query: (data) => ({
         url: "/auth/register",
@@ -47,6 +53,16 @@ export const api = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+
+    // Uplaod image on profile
+    uploadProfileImage: build.mutation<ApiResponse<object>, FormData>({
+      query: (data) => ({
+        url: "/user/update-profile",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
@@ -55,4 +71,5 @@ export const {
   useLoginUserMutation,
   useRegisterUserMutation,
   useLogoutUserMutation,
+  useUploadProfileImageMutation,
 } = api;

@@ -1,6 +1,10 @@
 export interface User {
-  name: string;
+  firstName: string;
+  lastName: string;
+  profilePic: string;
   email: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuthResponse {

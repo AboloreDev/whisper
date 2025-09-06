@@ -55,6 +55,8 @@ const LoginPage = () => {
         toast.success(message || "Login successful!");
         form.reset();
         router.push("/dashboard");
+        console.log(data);
+        console.log(success);
       } else {
         toast.error(message || "Something went wrong");
       }

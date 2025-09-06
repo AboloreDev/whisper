@@ -12,7 +12,7 @@ import { generateToken } from "../lib/generateToken";
 
 export const registerUser = async (req: Request, res: Response) => {
   // GET REQUEST FROM BODY
-  const { firstName, lastName, email, password, profilePic } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
   try {
     // VALIDATE ALL FIELDS
@@ -44,7 +44,6 @@ export const registerUser = async (req: Request, res: Response) => {
       lastName,
       email,
       password: hashedPassword,
-      profilePic,
     });
 
     if (newUser) {
@@ -53,9 +52,15 @@ export const registerUser = async (req: Request, res: Response) => {
       // save to db
       await newUser.save();
       //   return a response
-      res
-        .status(CREATED)
-        .json({ success: true, message: "User Created Successfully", newUser });
+      res.status(CREATED).json({
+        success: true,
+        message: "User Created Successfully",
+        _id: newUser._id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        profilePic: newUser.profilePic,
+      });
     } else {
       res
         .status(BAD_REQUEST)
@@ -90,9 +95,15 @@ export const loginUser = async (req: Request, res: Response) => {
     generateToken(user._id, res);
 
     // SEND A RESPONSE
-    res
-      .status(OK)
-      .json({ success: true, message: "User Logged in succesfully", user });
+    res.status(OK).json({
+      success: true,
+      message: "User Logged in succesfully",
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      profilePic: user.profilePic,
+    });
   } catch (error) {
     return res
       .status(INTRENAL_SERVER_ERROR)
